@@ -1,4 +1,7 @@
+import  {useContext} from 'react'
+import CartContext from '../../store/cart-context'
 import './HeaderCartButton.styles.css'
+
    const CartIcon=() =>{
     return(
     <svg
@@ -12,10 +15,14 @@ import './HeaderCartButton.styles.css'
 }
 
 const HeaderCartButton=(props)=>{
-    return <button className="button">
+  const cartCtx = useContext(CartContext)
+  const noOfCartItems=cartCtx.items.reduce((currentNumber,item)=>{
+    return currentNumber+item.amount
+  },0)
+    return <button className="button" onClick={props.onClick}>
         <span className="icon"><CartIcon/></span>
         <span>Your Cart</span>
-        <span className="badge">3</span>
+        <span className="badge">{noOfCartItems}</span>
     </button>
 }
 
