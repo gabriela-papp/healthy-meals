@@ -20,6 +20,7 @@
 }
 
 .actions button {
+  display: inline-block;
   font: inherit;
   cursor: pointer;
   background-color: transparent;
