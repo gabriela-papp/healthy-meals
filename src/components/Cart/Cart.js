@@ -1,4 +1,4 @@
-import { useContext,useState } from 'react'
+import React, { useContext,useState } from 'react'
 import Modal from '../UI/Modal'
 import CartContext from '../../store/cart-context'
 import CartItem from './CartItem'
@@ -8,6 +8,7 @@ import './Cart.styles.css'
 const Cart=(props)=>{
     const [isCheckout,setIsCheckout]=useState(false)
     const cartCtx=useContext(CartContext)
+    const [didSubmit,setDidSubmit]=useState(false)
 
     const totalAmount= `£${cartCtx.totalAmount.toFixed(2)}`
 
@@ -22,6 +23,12 @@ const Cart=(props)=>{
     const orderHandler=()=>{
         setIsCheckout(true)
     }
+
+    const submitOrderHandler=()=>{
+        setDidSubmit(true)
+        cartCtx.clearCart()
+    }
+
     const hasItems=cartCtx.items.length>0;
 
     const cartItems =cartCtx.items.map((item)=>
@@ -41,16 +48,30 @@ const Cart=(props)=>{
                 <button className='button' onClick={orderHandler}>Order</button>}
         </div>
 
-    return <Modal onClose={props.onClose}>
+        const cartModalContent= (
+        <React.Fragment>
         <ul className='cart-items'>{cartItems}</ul>
         <div className='total'>
             <span>Total Amount</span>
             <span>{totalAmount}</span>
         </div>
-        {isCheckout && <Checkout onCancel={props.onClose}/>}
-        {!isCheckout && modalActions}
-        
-       
+        {isCheckout && <Checkout onSubmit={submitOrderHandler} onCancel={props.onClose}/>}
+        {!isCheckout && modalActions} 
+        </React.Fragment>
+        )
+
+        const didSubmitModalContent=(
+        <React.Fragment>
+        <p>Successfully sent out the order.</p>
+        <div className='actions'>
+            <button className='button__alt' onClick={props.onClose}>Close</button>
+        </div>
+        </React.Fragment>
+        )
+
+    return <Modal onClose={props.onClose}>
+        {!didSubmit && cartModalContent}
+        {didSubmit && didSubmitModalContent}
     </Modal>
 }
 
